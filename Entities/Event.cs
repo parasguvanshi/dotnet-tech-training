@@ -22,6 +22,5 @@ namespace SportsManagementApp.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public ICollection<EventCategory> Categories { get; set; } = new List<EventCategory>();
-        public ICollection<ParticipantRegistration> Registrations { get; set; } = new List<ParticipantRegistration>();
     }
 }

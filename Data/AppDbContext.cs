@@ -54,12 +54,6 @@ namespace SportsManagementApp.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ParticipantRegistration>()
-                .HasOne(registration => registration.Event)
-                .WithMany(events => events.Registrations)
-                .HasForeignKey(registration => registration.EventId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ParticipantRegistration>()
                 .HasOne(registration => registration.EventCategory)
                 .WithMany(category => category.EventRegistrations)
                 .HasForeignKey(registration => registration.EventCategoryId)
