@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SportsManagementApp.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateFields : Migration
+    public partial class DatabaseSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,6 +74,8 @@ namespace SportsManagementApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EventName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     SportId = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    Format = table.Column<int>(type: "int", nullable: false),
                     RequestedVenue = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LogisticsRequirements = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -204,7 +206,6 @@ namespace SportsManagementApp.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    EventId = table.Column<int>(type: "int", nullable: false),
                     EventCategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -216,12 +217,6 @@ namespace SportsManagementApp.Migrations
                         name: "FK_ParticipantRegistrations_EventCategories_EventCategoryId",
                         column: x => x.EventCategoryId,
                         principalTable: "EventCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ParticipantRegistrations_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -373,11 +368,6 @@ namespace SportsManagementApp.Migrations
                 name: "IX_ParticipantRegistrations_EventCategoryId",
                 table: "ParticipantRegistrations",
                 column: "EventCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParticipantRegistrations_EventId",
-                table: "ParticipantRegistrations",
-                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ParticipantRegistrations_UserId_EventCategoryId",

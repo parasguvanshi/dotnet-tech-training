@@ -135,6 +135,12 @@ namespace SportsManagementApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("Format")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
                     b.Property<string>("LogisticsRequirements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

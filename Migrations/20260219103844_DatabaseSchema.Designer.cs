@@ -12,8 +12,8 @@ using SportsManagementApp.Data;
 namespace SportsManagementApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260217093656_ParticipantRegistrationsUpdated")]
-    partial class ParticipantRegistrationsUpdated
+    [Migration("20260219103844_DatabaseSchema")]
+    partial class DatabaseSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,6 +137,12 @@ namespace SportsManagementApp.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Format")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("LogisticsRequirements")
                         .IsRequired()
