@@ -28,7 +28,6 @@ namespace SportsManagementApp.Controllers
 
                 return CreatedAtAction(nameof(GetById), new { id = result.Id }, new ApiResponseSuccess<Sport>
                 {
-                    Success = true,
                     Message = StringConstant.sportsCreated,
                     Data = result
                 });
@@ -37,7 +36,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.InnerException?.Message ?? ex.Message
                 });
             }
@@ -45,7 +43,6 @@ namespace SportsManagementApp.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponseSuccess<Sport>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<Sport>>> GetAll()
         {
@@ -55,16 +52,15 @@ namespace SportsManagementApp.Controllers
 
                 if(result == null)
                 {
-                    return NotFound(new ApiResponseError<string>
+                    return Ok(new ApiResponseSuccess<IEnumerable<Sport>>
                     {
-                        Success = false,
                         Message = StringConstant.sportNotFound,
+                        Data = result
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<IEnumerable<Sport>>
                 {
-                    Success = true,
                     Message = StringConstant.sportsFetchSuccess,
                     Data = result
                 });
@@ -73,7 +69,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.InnerException?.Message ?? ex.Message
                 });
             }
@@ -93,14 +88,12 @@ namespace SportsManagementApp.Controllers
                 {
                     return NotFound(new ApiResponseError<string>
                     {
-                        Success = false,
                         Message = StringConstant.sportNotFound
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<Sport>
                 {
-                    Success = true,
                     Message = StringConstant.sportsFetchSuccess,
                     Data = result
                 });
@@ -109,7 +102,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.InnerException?.Message ?? ex.Message
                 });
             }

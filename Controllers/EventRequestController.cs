@@ -30,7 +30,6 @@ namespace SportsManagementApp.Controllers
 
                 var response = new ApiResponseSuccess<EventRequest>
                 {
-                    Success = true,
                     Message = StringConstant.eventCreated,
                     Data = result
                 };
@@ -41,7 +40,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.InnerException?.Message ?? ex.Message
                 });
             }
@@ -50,7 +48,6 @@ namespace SportsManagementApp.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponseSuccess<EventRequest>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<EventRequest>>> GetAllEventRequest()
         {
             try
@@ -59,16 +56,15 @@ namespace SportsManagementApp.Controllers
 
                 if(result == null)
                 {
-                    return NotFound(new ApiResponseError<string>
+                    return Ok(new ApiResponseSuccess<IEnumerable<EventRequest>>
                     {
-                        Success = false,
                         Message = StringConstant.noEventFound,
+                        Data = result
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<IEnumerable<EventRequest>>
                 {
-                    Success = true,
                     Message = StringConstant.eventRequestSuccess,
                     Data = result
                 });
@@ -77,7 +73,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.Message
                 });
             }
@@ -97,14 +92,12 @@ namespace SportsManagementApp.Controllers
                 {
                     return NotFound(new ApiResponseError<string>
                     {
-                        Success = false,
                         Message = StringConstant.noRequestFound,
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<EventRequest>
                 {
-                    Success = true,
                     Message = StringConstant.eventRequestSuccess,
                     Data = result
                 });
@@ -113,7 +106,7 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
+                  
                     Message = ex.Message
                 });
             }
@@ -122,7 +115,6 @@ namespace SportsManagementApp.Controllers
         [HttpGet("status/{status}")]
         [ProducesResponseType(typeof(ApiResponseSuccess<EventRequest>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<EventRequest>>> GetEventRequestByStatus(RequestStatus status)
         {
             try
@@ -131,16 +123,15 @@ namespace SportsManagementApp.Controllers
 
                  if(result == null)
                 {
-                    return NotFound(new ApiResponseError<string>
+                    return Ok(new ApiResponseSuccess<IEnumerable<EventRequest>>
                     {
-                        Success = false,
                         Message = StringConstant.noEventFound,
+                        Data = result
                     });
                 }
                 
                 return Ok(new ApiResponseSuccess<IEnumerable<EventRequest>>
                 {
-                    Success = true,
                     Message = StringConstant.eventRequestSuccess,
                     Data = result
                 });
@@ -149,7 +140,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.Message
                 });
             }
@@ -169,14 +159,12 @@ namespace SportsManagementApp.Controllers
                 {
                     return NotFound(new ApiResponseError<string>
                     {
-                        Success = false,
                         Message = StringConstant.noEventFound,
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<EventRequest>
                 {
-                    Success = true,
                     Message = StringConstant.eventUpdated,
                     Data = result
                 });
@@ -185,7 +173,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.Message
                 });
             }
@@ -205,14 +192,12 @@ namespace SportsManagementApp.Controllers
                 {
                     return NotFound(new ApiResponseError<string>
                     {
-                        Success = false,
                         Message = StringConstant.noRequestFound,
                     });
                 }
 
                 return Ok(new ApiResponseSuccess<EventRequest>
                 {
-                    Success = true,
                     Message = StringConstant.eventRequestWithdrawl,
                     Data = result
                 });
@@ -221,7 +206,6 @@ namespace SportsManagementApp.Controllers
             {
                 return BadRequest(new ApiResponseError<string>
                 {
-                    Success = false,
                     Message = ex.Message
                 });
             }

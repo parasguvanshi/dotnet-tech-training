@@ -109,7 +109,7 @@ public class EventRequestService : IEventRequestService
         var request = await _eventRequestRepository.GetEventRequestById(id);
 
         if (request == null) {
-            throw new Exception(StringConstant.noEventFound);
+            throw new Exception(StringConstant.noRequestFound);
         }
 
         if (request.Status != RequestStatus.Pending) {
@@ -134,7 +134,7 @@ public class EventRequestService : IEventRequestService
         var request = await _eventRequestRepository.GetEventRequestById(id);
 
         if (request == null) {
-            throw new Exception(StringConstant.noEventFound);
+            throw new Exception(StringConstant.noRequestFound);
         }
 
         if (request.Status != RequestStatus.Pending) {
