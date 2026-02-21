@@ -7,5 +7,6 @@ namespace SportsManagementApp.Services.Interfaces
     {
         Task<Sport> CreateSportAsync(CreateSportDto createSport);
         Task<IEnumerable<Sport>> GetSportsAsync();
+        Task<Sport> UpdateSportAsync(int id, UpdateSportDto updateSport);
     }
 }

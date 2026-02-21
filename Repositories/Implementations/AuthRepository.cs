@@ -26,12 +26,6 @@ namespace SportsManagementApp.Repositories.Implementations
             return await _context.Users.AnyAsync(user => user.Email == email);
         }
 
-        public async Task<Role?> GetParticipantRoleAsync()
-        {
-            return await _context.Roles
-                .FirstOrDefaultAsync(role => role.Name == "Participant");
-        }
-
         public async Task AddUserAsync(User user)
         {
             _context.Users.Add(user);

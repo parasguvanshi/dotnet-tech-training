@@ -35,5 +35,33 @@ namespace SportsManagementApp.Services.Implementations
         {
             return await _sportRepository.GetSportsAsync();
         }
+
+        public async Task<Sport> UpdateSportAsync(int id, UpdateSportDto updateSport)
+        {
+            if (string.IsNullOrEmpty(updateSport.Name))
+            {
+                throw new Exception("Sport name is required");
+            }
+
+            var sport = await _sportRepository.GetSportByIdAsync(id);
+
+            if (sport == null)
+            {
+                throw new Exception("Sport not found");
+            }
+
+            var exists = await _sportRepository.SportExistsAsync(updateSport.Name);
+
+            if (exists && sport.Name.ToLower() != updateSport.Name.ToLower())
+            {
+                throw new Exception("Sport with this name already exists");
+            }
+
+            sport.Name = updateSport.Name.Trim();
+            sport.UpdatedAt = DateTime.UtcNow;
+
+            await _sportRepository.UpdateSportAsync(sport);
+            return sport;
+        }
     }
 }

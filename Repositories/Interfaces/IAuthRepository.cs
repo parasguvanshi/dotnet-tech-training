@@ -6,7 +6,6 @@ namespace SportsManagementApp.Repositories.Interfaces
     {
         Task<User?> GetUserByEmailWithRoleAsync(string email);
         Task<bool> UserExistsAsync(string email);
-        Task<Role?> GetParticipantRoleAsync();
         Task AddUserAsync(User user);
     }
 }

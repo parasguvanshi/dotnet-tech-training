@@ -24,31 +24,39 @@ namespace SportsManagementApp.Repositories.Implementations
                     Id = user.Id,
                     FullName = user.FullName,
                     Email = user.Email,
-                    Role = user.Role!.Name
+                    Role = user.Role!.Name ?? "N/A"
                 })
                 .ToListAsync();
         }
 
         public async Task<LoginResponseDto?> GetUserByIdAsync(int id)
         {
-            return await _context.Users
+            var user = await _context.Users
                 .Include(user => user.Role)
-                .Where(user => user.Id == id)
-                .Select(user => new LoginResponseDto
-                {
-                    Id = user.Id,
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Role = user.Role!.Name
-                })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(user => user.Id == id);
+
+            if (user == null) return null;
+
+            return new LoginResponseDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Role = user.Role?.Name ?? "N/A"
+            };
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<User?> GetUserEntityByIdAsync(int userId)
+        {
+            return await _context.Users
+                .Include(user => user.Role)
+                .FirstOrDefaultAsync(user => user.Id == userId);
+        }
+
+        public async Task AddUserAsync(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return user;
         }
 
         public async Task UpdateUserAsync(User user)
@@ -56,16 +64,11 @@ namespace SportsManagementApp.Repositories.Implementations
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<User?> GetUserByIdEntityAsync(int userId)
-        {
-            return await _context.Users.FindAsync(userId);
-        }
-
-        public async Task AddUserAsync(User user)
+        public async Task<User> CreateUserAsync(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return user;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace SportsManagementApp.Controllers
             }
             catch (Exception exception)
             {
-                return Conflict(exception.Message);
+                return StatusCode(500, exception.Message);
             }
         }
 
@@ -38,6 +38,21 @@ namespace SportsManagementApp.Controllers
         {
             var sports = await _sportsService.GetSportsAsync();
             return Ok(sports);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSport(int id, [FromBody] UpdateSportDto updateSport)
+        {
+            try
+            {
+                var sport = await _sportsService.UpdateSportAsync(id, updateSport);
+                return Ok(sport);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, exception.Message);
+            }
         }
     }
 }

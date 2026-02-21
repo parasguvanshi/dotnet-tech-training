@@ -40,7 +40,7 @@ namespace SportsManagementApp.Controllers
             }
             catch (Exception exception)
             {
-                return Conflict(exception.Message);
+                return StatusCode(500, exception.Message);
             }
         }
     }

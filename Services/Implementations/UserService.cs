@@ -47,7 +47,7 @@ namespace SportsManagementApp.Services.Implementations
 
         public async Task<User?> UpdateUserAsync(int userId, UpdateUserDto updateUser)
         {
-            var user = await _userRepository.GetUserByIdEntityAsync(userId);
+            var user = await _userRepository.GetUserEntityByIdAsync(userId);
             if (user == null) return null;
 
             if (!string.IsNullOrWhiteSpace(updateUser.FullName))

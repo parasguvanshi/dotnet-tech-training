@@ -8,5 +8,7 @@ namespace SportsManagementApp.Repositories.Interfaces
         Task<bool> SportExistsAsync(string name);
         Task<Sport> CreateSportAsync(string name);
         Task<IEnumerable<Sport>> GetSportsAsync();
+        Task<Sport?> GetSportByIdAsync(int id);
+        Task UpdateSportAsync(Sport sport);
     }
 }

@@ -8,9 +8,9 @@ namespace SportsManagementApp.Repositories.Interfaces
     {
         Task<List<LoginResponseDto>> GetUsersAsync();
         Task<LoginResponseDto?> GetUserByIdAsync(int id);
-        Task<User> CreateUserAsync(User user);   
+        Task<User> CreateUserAsync(User user);
+        Task<User?> GetUserEntityByIdAsync(int userId);
         Task UpdateUserAsync(User user);
-        Task<User?> GetUserByIdEntityAsync(int userId);
         Task AddUserAsync(User user);            
     }
 }

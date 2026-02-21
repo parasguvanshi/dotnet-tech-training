@@ -38,5 +38,16 @@ namespace SportsManagementApp.Repositories.Implementations
         {
             return await _context.Sports.ToListAsync();
         }
+
+        public async Task<Sport?> GetSportByIdAsync(int id)
+        {
+            return await _context.Sports.FirstOrDefaultAsync(sport => sport.Id == id);
+        }
+
+        public async Task UpdateSportAsync(Sport sport)
+        {
+            _context.Sports.Update(sport);
+            await _context.SaveChangesAsync();
+        }
     }
 }

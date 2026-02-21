@@ -13,12 +13,14 @@ namespace SportsManagementApp.Services.Implementations
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly IConfiguration _configuration;
         private readonly PasswordHasher<User> _passwordHasher;
 
-        public AuthService(IAuthRepository authRepository, IConfiguration configuration)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IRoleRepository roleRepository)
         {
             _authRepository = authRepository;
+            _roleRepository = roleRepository;
             _configuration = configuration;
             _passwordHasher = new PasswordHasher<User>();
         }
@@ -29,14 +31,14 @@ namespace SportsManagementApp.Services.Implementations
 
             if (user == null)
             {
-                return null;
+                throw new Exception("Invalid email or password");
             }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequest.Password);
 
             if (result == PasswordVerificationResult.Failed)
             {
-                return null;
+                throw new Exception("Invalid password");
             }
 
             if (!user.IsActive)
@@ -68,7 +70,7 @@ namespace SportsManagementApp.Services.Implementations
                 throw new Exception("User already exists");
             }
 
-            var participantRole = await _authRepository.GetParticipantRoleAsync();
+            var participantRole = await _roleRepository.GetRoleByTypeAsync("Participant");
 
             if (participantRole == null)
             {
@@ -87,7 +89,6 @@ namespace SportsManagementApp.Services.Implementations
             user.PasswordHash = _passwordHasher.HashPassword(user, registerRequest.Password);
 
             await _authRepository.AddUserAsync(user);
-            user.Role = participantRole;
 
             var token = GenerateJwtToken(user);
 

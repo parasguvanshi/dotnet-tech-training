@@ -24,14 +24,14 @@ namespace SportsManagementApp.Controllers
 
                 if (result == null)
                 {
-                    return NotFound("Invalid email or password");
+                    return Unauthorized("Invalid email or password");
                 }
 
                 return Ok(result);
             }
             catch (Exception exception)
             {
-                return Conflict(exception.Message);
+                return StatusCode(500, exception.Message);
             }
         }
 
@@ -45,7 +45,7 @@ namespace SportsManagementApp.Controllers
             }
             catch (Exception exception)
             {
-                return Conflict(exception.Message);
+                return StatusCode(500, exception.Message);
             }
         }
     }

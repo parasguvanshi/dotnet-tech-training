@@ -8,19 +8,19 @@ namespace SportsManagementApp.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class MyTeamsController : ControllerBase
+    public class TeamsController : ControllerBase
     {
-        private readonly IParticipantService _participantService;
+        private readonly ITeamsService _teamssService;
 
-        public MyTeamsController(IParticipantService participantService)
+        public TeamsController(ITeamsService teamsService)
         {
-            _participantService = participantService;
+            _teamssService = teamsService;
         }
 
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetMyTeam(int userId)
         {
-            var teams = await _participantService.GetMyTeamsAsync(userId);
+            var teams = await _teamssService.GetUserTeamsAsync(userId);
 
             return Ok(teams);
         }
