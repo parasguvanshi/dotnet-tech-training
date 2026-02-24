@@ -1,26 +1,31 @@
 using SportsManagementApp.DTOs;
 using SportsManagementApp.Enums;
 using SportsManagementApp.Entities;
-using SportsManagementApp.Repositories;
-using SportsManagementApp.Repositories.SportsRepository;
 using SportsManagementApp.Helper;
+using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.Repositories.Interfaces;
+using AutoMapper;
 
-namespace SportsManagementApp.Services.EventRequestService;
+namespace SportsManagementApp.Services.EventRequestService.Implementations;
 
 public class EventRequestService : IEventRequestService
 {
     private readonly IEventRequestRepository _eventRequestRepository;
     private readonly ISportRepository _sportRepository;
+    private readonly IMapper _mapper;
 
-    public EventRequestService(IEventRequestRepository eventRequestRepository, ISportRepository sportRepository)
+    public EventRequestService(
+        IEventRequestRepository eventRequestRepository,
+        ISportRepository sportRepository,
+        IMapper mapper)
     {
         _eventRequestRepository = eventRequestRepository;
         _sportRepository = sportRepository;
+        _mapper = mapper;
     }
 
     public async Task<EventRequestResponseDto> RaiseEventRequest(CreateEventRequestDto dto, int adminId)
     {
-
         if (dto.StartDate == default || dto.EndDate == default)
         {
             throw new Exception(StringConstant.DateRequired);
@@ -31,7 +36,7 @@ public class EventRequestService : IEventRequestService
             throw new Exception(StringConstant.DateCompare);
         }
 
-        if (!await _sportRepository.Exists(dto.SportId))
+        if (!await _sportRepository.ExistsAsync(s => s.Id == dto.SportId))
         {
             throw new Exception(StringConstant.invalidSportsId);
         }
@@ -46,12 +51,11 @@ public class EventRequestService : IEventRequestService
             throw new Exception(StringConstant.GenderTypeRequired);
         }
 
-        var existingEventRequest = await _eventRequestRepository.EventRequestExist(dto);
+        var existingEventRequest = await _eventRequestRepository.ExistsAsync(e => e.SportId == dto.SportId && e.Gender == dto.Gender && e.Format == dto.Format && e.StartDate == dto.StartDate);
         if (existingEventRequest)
         {
             throw new Exception(StringConstant.eventExist);
         }
-
 
         var request = new EventRequest
         {
@@ -59,34 +63,27 @@ public class EventRequestService : IEventRequestService
             SportId = dto.SportId,
             RequestedVenue = dto.RequestedVenue.Trim(),
             LogisticsRequirements = dto.LogisticsRequirements,
-
             Format = dto.Format,
             Gender = dto.Gender,
-
             StartDate = dto.StartDate,
             EndDate = dto.EndDate,
-
             Status = RequestStatus.Pending,
             AdminId = adminId,
             CreatedDate = DateTime.UtcNow
-
         };
 
-        await _eventRequestRepository.AddEventRequest(request);
+        await _eventRequestRepository.AddAsync(request);
+        await _eventRequestRepository.SaveChangesAsync();
 
-        var eventRequest = await _eventRequestRepository.GetEventRequestById(request.Id);
+        var createdRequest = await _eventRequestRepository.GetEventRequestById(request.Id);
 
-        if (eventRequest == null)
-        {
-            throw new Exception(StringConstant.noEventFound);
-        }
-        return eventRequest;
+        return _mapper.Map<EventRequestResponseDto>(createdRequest);
     }
-
 
     public async Task<IEnumerable<EventRequestResponseDto>> SearchEventRequests(int? id, RequestStatus? status)
     {
-        return await _eventRequestRepository.Search(id, status);
+        var eventRequests = await _eventRequestRepository.Search(id, status);
+        return _mapper.Map<IEnumerable<EventRequestResponseDto>>(eventRequests);
     }
 
     public async Task<EventRequestResponseDto> EditEventRequest(int id, EditEventRequestDto dto)
@@ -111,7 +108,7 @@ public class EventRequestService : IEventRequestService
             throw new Exception(StringConstant.GenderTypeRequired);
         }
 
-        var request = await _eventRequestRepository.GetEventRequestEntityById(id);
+        var request = await _eventRequestRepository.GetEventRequestById(id);
 
         if (request == null)
         {
@@ -126,27 +123,20 @@ public class EventRequestService : IEventRequestService
         request.EventName = dto.EventName.Trim();
         request.RequestedVenue = dto.RequestedVenue.Trim();
         request.LogisticsRequirements = dto.LogisticsRequirements;
-
         request.Format = dto.Format;
         request.Gender = dto.Gender;
-
         request.StartDate = dto.StartDate;
         request.EndDate = dto.EndDate;
 
-        await _eventRequestRepository.UpdateEventRequest(request);
+        _eventRequestRepository.Update(request);
+        await _eventRequestRepository.SaveChangesAsync();
 
-        var eventRequest = await _eventRequestRepository.GetEventRequestById(request.Id);
-
-        if (eventRequest == null)
-        {
-            throw new Exception(StringConstant.noEventFound);
-        }
-        return eventRequest;
+        return _mapper.Map<EventRequestResponseDto>(request);
     }
 
-    public async Task<EventRequestResponseDto> WithdrawlEventRequest(int id)
+    public async Task<EventRequestResponseDto> WithdrawEventRequest(int id)
     {
-        var request = await _eventRequestRepository.GetEventRequestEntityById(id);
+        var request = await _eventRequestRepository.GetEventRequestById(id);
 
         if (request == null)
         {
@@ -160,16 +150,9 @@ public class EventRequestService : IEventRequestService
 
         request.Status = RequestStatus.Withdrawn;
 
-        await _eventRequestRepository.UpdateEventRequest(request);
+        _eventRequestRepository.Update(request);
+        await _eventRequestRepository.SaveChangesAsync();
 
-        var eventRequest = await _eventRequestRepository.GetEventRequestById(request.Id);
-
-        if (eventRequest == null)
-        {
-            throw new Exception(StringConstant.noEventFound);
-        }
-        return eventRequest;
-
-
+        return _mapper.Map<EventRequestResponseDto>(request);
     }
 }

@@ -5,7 +5,6 @@ public class EventRequestResponseDto
     public int Id { get; set; }
     public string EventName { get; set; } = string.Empty;
     public int SportId { get; set; }     
-
     public string SportsName { get; set;} = string.Empty;  
     public GenderType Gender { get; set; }
     public MatchFormat Format { get; set; }

@@ -1,7 +1,7 @@
 
-using SportsManagementApp.Repositories;
-using SportsManagementApp.Repositories.EventRequestRepository;
-using SportsManagementApp.Repositories.SportsRepository;
+using SportsManagementApp.Repositories.Implementations;
+using SportsManagementApp.Repositories.Interfaces;
+
 
 
 namespace SportsManagementApp.Extensions
@@ -10,9 +10,9 @@ namespace SportsManagementApp.Extensions
     {
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));    
             services.AddScoped<IEventRequestRepository , EventRequestRepository>();
-            services.AddScoped<ISportRepository, SportRepository>();
-            
+            services.AddScoped<ISportRepository, SportRepository>();    
         }
     }
 }

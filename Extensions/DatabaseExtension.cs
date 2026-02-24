@@ -9,8 +9,6 @@ public static class DatabaseExtension
         services.AddDbContext<AppDbContext>(options => 
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 
-        );
-
-        
+        );  
     }
 }
