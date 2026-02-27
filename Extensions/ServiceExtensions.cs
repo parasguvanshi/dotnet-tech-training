@@ -1,14 +1,15 @@
 using SportsManagementApp.Services.EventRequestService.Implementations;
 using SportsManagementApp.Services.Interfaces;
 
-namespace SportsManagementApp.Extensions
+namespace SportsManagementApp.Extensions;
+
+public static class ServiceExtensions
 {
-    public static class ServiceExtensions
+    public static void AddServices(this IServiceCollection services)
     {
-        public static void AddServices(this IServiceCollection services)
-        {          
-            services.AddScoped<IEventRequestService , EventRequestService>();
-            services.AddScoped<ISportService , SportService>();
-        }
+        services.AddScoped<IEventRequestService, EventRequestService>();
+        services.AddScoped<ISportService, SportService>();
+
     }
 }
+

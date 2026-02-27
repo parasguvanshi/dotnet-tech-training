@@ -14,6 +14,7 @@
         Male = 1,
         Female = 2,
         Mixed = 3,
+        Both = 4,
     }
 
     public enum MatchFormat
@@ -21,6 +22,7 @@
         Unknown = 0,
         Singles = 1,
         Doubles = 2,
+        Both = 3,
     }
 
     public enum EventStatus
@@ -62,5 +64,11 @@
         Live = 2,
         Completed = 3,
         Cancelled = 4,
+    }
+   public enum NotificationType
+    {
+        Unknown = 0,
+        Approved = 1,
+        Rejected = 2,
     }
 }

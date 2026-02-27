@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsManagementApp.DTOs;
 using SportsManagementApp.Enums;
-using SportsManagementApp.Helper;
 using SportsManagementApp.Services.Interfaces;
 
 namespace SportsManagementApp.Controllers;
