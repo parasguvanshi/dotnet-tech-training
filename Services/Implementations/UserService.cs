@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using SportsManagementApp.Data.DTOs.Auth;
 using SportsManagementApp.Data.DTOs.UserManagement;
 using SportsManagementApp.Data.Entities;
+using SportsManagementApp.Data.Filters;
+using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
 
@@ -29,24 +31,31 @@ namespace SportsManagementApp.Services.Implementations
         public async Task<UserResponseDto?> GetUserByIdAsync(int userId)
         {
             var user = await _userRepository.GetUserEntityByIdAsync(userId);
-            return _mapper.Map<UserResponseDto?>(user);
+            return _mapper.Map<LoginResponseDto?>(user);
         }
 
         public async Task<UserResponseDto> CreateUserAsync(CreateUserDto createUser)
         {
+            var existingUser = await _userRepository
+                .GetUsersByFilterAsync(new UserFilterDto { SearchTerm = createUser.Email });
+
+            if (existingUser.Any(user => user.Email.Equals(createUser.Email, StringComparison.OrdinalIgnoreCase)))
+                throw new ConflictException("User with this email already exists");
+
             var user = _mapper.Map<User>(createUser);
             user.CreatedAt = DateTime.UtcNow;
             user.IsActive = true;
             user.PasswordHash = _passwordHasher.HashPassword(user, createUser.Password);
 
             await _userRepository.AddAsync(user);
-            return _mapper.Map<UserResponseDto>(user);
+            return user;
         }
 
         public async Task<UserResponseDto?> UpdateUserAsync(int userId, UpdateUserDto updateUser)
         {
             var user = await _userRepository.GetUserEntityByIdAsync(userId);
-            if (user == null) return null;
+            if (user == null)
+                throw new NotFoundException("User not found");
 
             _mapper.Map(updateUser, user);
 
@@ -56,7 +65,9 @@ namespace SportsManagementApp.Services.Implementations
             user.UpdatedAt = DateTime.UtcNow;
 
             await _userRepository.UpdateAsync(user);
-            return _mapper.Map<UserResponseDto>(user);
+
+            var updatedUserDto = await _userRepository.GetUserDtoByIdAsync(user.Id);
+            return updatedUserDto!;
         }
     }
 }

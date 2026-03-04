@@ -1,6 +1,7 @@
 ﻿using SportsManagementApp.Data.DTOs.Auth;
 using SportsManagementApp.Data.DTOs.UserManagement;
 using SportsManagementApp.Data.Entities;
+using SportsManagementApp.Data.Filters;
 
 namespace SportsManagementApp.Services.Interfaces
 {
