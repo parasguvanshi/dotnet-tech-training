@@ -28,10 +28,15 @@ namespace SportsManagementApp.Services.Implementations
             return _mapper.Map<List<UserResponseDto>>(users);
         }
 
+        public async Task<List<UserResponseDto>> GetUsersByFilterAsync(UserFilterDto filter)
+        {
+            return await _userRepository.GetUsersByFilterAsync(filter);
+        }
+
         public async Task<UserResponseDto?> GetUserByIdAsync(int userId)
         {
             var user = await _userRepository.GetUserEntityByIdAsync(userId);
-            return _mapper.Map<LoginResponseDto?>(user);
+            return _mapper.Map<UserResponseDto?>(user);
         }
 
         public async Task<UserResponseDto> CreateUserAsync(CreateUserDto createUser)
@@ -48,7 +53,8 @@ namespace SportsManagementApp.Services.Implementations
             user.PasswordHash = _passwordHasher.HashPassword(user, createUser.Password);
 
             await _userRepository.AddAsync(user);
-            return user;
+            var savedUser = await _userRepository.GetUserDtoByIdAsync(user.Id);
+            return savedUser!;
         }
 
         public async Task<UserResponseDto?> UpdateUserAsync(int userId, UpdateUserDto updateUser)
