@@ -1,7 +1,7 @@
 using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Data.Filters;
 using SportsManagementApp.Exceptions;
-using SportsManagementApp.Constants;
+using SportsManagementApp.StringConstants;
 using SportsManagementApp.Enums;
 using System.Linq.Expressions;
 
