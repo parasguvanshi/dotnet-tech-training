@@ -2,8 +2,6 @@
 using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using SportsManagementApp.Data.DTOs.SportManagement;
-using System.Linq.Expressions;
 
 namespace SportsManagementApp.Repositories.Implementations
 {
@@ -14,16 +12,6 @@ namespace SportsManagementApp.Repositories.Implementations
         public async Task<bool> SportExistsAsync(string name)
         {
             return await _dbSet.AnyAsync(sport => sport.Name == name);
-        }
-
-        public async Task<List<TResult>> GetSportsAsyncWithFilter<TResult>(
-            Expression<Func<Sport, bool>> predicate,
-            Expression<Func<Sport, TResult>> projection)
-        {
-            return await _dbSet
-                .Where(predicate)
-                .Select(projection)
-                .ToListAsync();
         }
     }
 }
