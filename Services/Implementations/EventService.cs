@@ -1,33 +1,40 @@
 using AutoMapper;
+using SportsManagementApp.Constants;
 using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Data.Filters;
+using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.DTOs.EventCreation;
 using SportsManagementApp.Enums;
 using SportsManagementApp.Exceptions;
-using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
 using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.Services
 {
-    public class EventService : IEventService
+    public class EventService : GenericService<Event, EventResponseDto>, IEventService
     {
         private readonly IEventRepository _eventRepo;
         private readonly IEventRequestRepository _requestRepo;
         private readonly IUserRepository _userRepo;
-        private readonly IMapper _mapper;
 
         public EventService(
             IEventRepository eventRepo,
             IEventRequestRepository requestRepo,
             IUserRepository userRepo,
             IMapper mapper)
+            : base(eventRepo, mapper)
         {
             _eventRepo = eventRepo;
             _requestRepo = requestRepo;
             _userRepo = userRepo;
-            _mapper = mapper;
+        }
+
+        public override async Task<EventResponseDto> GetByIdAsync(int eventId)
+        {
+            var entity = await _eventRepo.GetByIdWithDetailsAsync(eventId)
+                ?? throw new NotFoundException(string.Format(StringConstant.EventNotFound, eventId));
+            return _mapper.Map<EventResponseDto>(entity);
         }
 
         public async Task<IEnumerable<EventResponseDto>> GetAllAsync(EventFilterDto filter)
@@ -46,13 +53,6 @@ namespace SportsManagementApp.Services
             var predicate = EventPredicateBuilder.Build(filter);
             var events = await _eventRepo.GetAllAsync(predicate);
             return _mapper.Map<IEnumerable<EventResponseDto>>(events);
-        }
-
-        public async Task<EventResponseDto> GetByIdAsync(int eventId)
-        {
-            var entity = await _eventRepo.GetByIdWithDetailsAsync(eventId)
-                ?? throw new NotFoundException(string.Format(StringConstant.EventNotFound, eventId));
-            return _mapper.Map<EventResponseDto>(entity);
         }
 
         public async Task<EventRequestPreFillResponseDto> GetEventRequestForPreFillAsync(int requestId)
