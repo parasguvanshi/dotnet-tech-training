@@ -28,11 +28,10 @@
     public enum EventStatus
     {
         Unknown = 0,
-        Open = 1,
-        Upcoming = 2,
-        Live = 3,
-        Completed = 4,
-        Cancelled = 5
+        Upcoming = 1,
+        Live = 2,
+        Completed = 3,
+        Cancelled = 4
     }
 
     public enum CategoryStatus

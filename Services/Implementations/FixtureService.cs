@@ -47,6 +47,7 @@ namespace SportsManagementApp.Services
 
             foreach (var match in matches)
                 await _matchRepo.AddAsync(match);
+            await _matchRepo.SaveChangesAsync();
 
             var created = await _matchRepo.GetByCategoryAsync(catId, null);
             return FixtureMappingHelper.MapFixtures(created, category, _mapper);
@@ -115,3 +116,4 @@ namespace SportsManagementApp.Services
         }
     }
 }
+

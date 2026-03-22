@@ -33,12 +33,5 @@ namespace SportsManagementApp.Controllers
         public async Task<IActionResult> GenerateFixtures(int categoryId) =>
             StatusCode(201, await _fixtureService.GenerateFixturesAsync(categoryId));
 
-        [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Organizer}")]
-        [HttpDelete("{categoryId:int}/fixtures")]
-        public async Task<IActionResult> DeleteFixtures(int categoryId)
-        {
-            await _fixtureService.DeleteFixturesAsync(categoryId);
-            return Ok(new { message = StringConstant.FixturesDeleted });
-        }
     }
 }

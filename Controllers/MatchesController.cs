@@ -13,10 +13,12 @@ namespace SportsManagementApp.Controllers
     {
         private readonly IMatchService _matchService;
         private readonly IEventCategoryService _eventCategoryService;
+        private readonly IFixtureService _fixtureService;
 
-        public MatchesController(IMatchService matchService, IEventCategoryService eventCategoryService)
+        public MatchesController(IMatchService matchService, IEventCategoryService eventCategoryService, IFixtureService fixtureService)
         {
             _matchService = matchService;
+            _fixtureService = fixtureService;
             _eventCategoryService = eventCategoryService;
         }
 
@@ -45,5 +47,13 @@ namespace SportsManagementApp.Controllers
         [HttpPatch("{matchId:int}/sets/{setId:int}")]
         public async Task<IActionResult> UpdateSetById(int matchId, int setId, [FromBody] MatchSetRequestDto request) =>
             Ok(await _matchService.UpdateSetByIdAsync(matchId, setId, request));
+
+        [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Organizer}")]
+        [HttpDelete("{categoryId:int}/fixtures")]
+        public async Task<IActionResult> DeleteFixtures(int categoryId)
+        {
+            await _fixtureService.DeleteFixturesAsync(categoryId);
+            return Ok(new { message = StringConstant.FixturesDeleted });
+        }
     }
 }
