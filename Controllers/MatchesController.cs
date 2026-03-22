@@ -25,12 +25,12 @@ namespace SportsManagementApp.Controllers
             _eventCategoryService = eventCategoryService;
         }
 
-        [HttpGet("category/{categoryId:int}/fixtures")]
+        [HttpGet("{categoryId:int}/fixtures")]
         public async Task<IActionResult> GetFixtures(int categoryId, [FromQuery] string? status = null) =>
             Ok(await _fixtureService.GetFixturesAsync(categoryId, status));
 
         [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Organizer}")]
-        [HttpDelete("category/{categoryId:int}/fixtures")]
+        [HttpDelete("{categoryId:int}/fixtures")]
         public async Task<IActionResult> DeleteFixtures(int categoryId)
         {
             await _fixtureService.DeleteFixturesAsync(categoryId);
