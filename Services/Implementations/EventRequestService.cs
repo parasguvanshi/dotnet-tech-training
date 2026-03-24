@@ -3,6 +3,7 @@ using SportsManagementApp.Exceptions;
 using SportsManagementApp.Data.DTOs;
 using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Data.Filters;
+using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.Enums;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
@@ -56,7 +57,13 @@ public class EventRequestService : IEventRequestService
         await _eventRequestRepository.AddAsync(request);
         await _eventRequestRepository.SaveChangesAsync();
 
-        var createdRequest = await _eventRequestRepository.GetEventRequestByIdAsync(request.Id);
+        var createdRequest = await _eventRequestRepository.GetByIdWithIncludesAsync(
+            e => e.Id == request.Id,
+            e => e.Sport,
+            e => e.OperationsReviewer,
+            e => e.Admin
+        );
+
         if (createdRequest == null)
             throw new NotFoundException(StringConstant.NoRequestFound);
 
@@ -71,7 +78,12 @@ public class EventRequestService : IEventRequestService
 
     public async Task<EventRequestResponseDto> GetByIdForAdminAsync(int id, int adminId)
     {
-        var request = await _eventRequestRepository.GetEventRequestByIdAsync(id);
+        var request = await _eventRequestRepository.GetByIdWithIncludesAsync(
+            e => e.Id == id,
+            e => e.Sport,
+            e => e.OperationsReviewer,
+            e => e.Admin
+        );
 
         if (request == null)
             throw new NotFoundException(StringConstant.NoRequestFound);
@@ -84,7 +96,15 @@ public class EventRequestService : IEventRequestService
 
     public async Task<IEnumerable<EventRequestResponseDto>> GetAllEventRequestsAsync(EventRequestFilterDto filter)
     {
-        var requests = await _eventRequestRepository.GetEventRequestsByFilterAsync(filter);
+        var predicate = EventRequestPredicateBuilder.Build(filter);
+
+        var requests = await _eventRequestRepository.GetAllWithIncludesAsync(
+            predicate,
+            e => e.Sport,
+            e => e.Admin,
+            e => e.OperationsReviewer
+        );
+
         return _mapper.Map<List<EventRequestResponseDto>>(requests);
     }
 
@@ -114,31 +134,17 @@ public class EventRequestService : IEventRequestService
         return _mapper.Map<EventRequestResponseDto>(request);
     }
 
-    private async Task<EventRequest> GetOwnedPendingRequestOrThrowAsync(int id, int adminId, string forbiddenMessage)
-    {
-        var request = await _eventRequestRepository.GetEventRequestByIdAsync(id);
-
-        if (request == null)
-            throw new NotFoundException(StringConstant.NoRequestFound);
-
-        if (request.AdminId != adminId)
-            throw new ForbiddenException(forbiddenMessage);
-
-        if (request.Status != RequestStatus.Pending)
-            throw new ConflictException(StringConstant.EventRequestModifyNotAllowed);
-
-        return request;
-    }
-
-    public async Task<EventRequestResponseDto> ReviewEventRequestAsync(
-    int id,
-    ReviewEventRequestDto dto,
-    int opsUserId)
+    public async Task<EventRequestResponseDto> ReviewEventRequestAsync(int id, ReviewEventRequestDto dto, int opsUserId)
     {
         if (dto.Status != RequestStatus.Approved && dto.Status != RequestStatus.Rejected)
             throw new ValidationException(StringConstant.OnlyApproveOrRejectAllowed);
 
-        var request = await _eventRequestRepository.GetEventRequestByIdAsync(id);
+        var request = await _eventRequestRepository.GetByIdWithIncludesAsync(
+            e => e.Id == id,
+            e => e.Sport,
+            e => e.OperationsReviewer,
+            e => e.Admin
+        );
 
         if (request == null)
             throw new NotFoundException(StringConstant.NoRequestFound);
@@ -163,5 +169,26 @@ public class EventRequestService : IEventRequestService
         );
 
         return _mapper.Map<EventRequestResponseDto>(request);
+    }
+
+    private async Task<EventRequest> GetOwnedPendingRequestOrThrowAsync(int id, int adminId, string forbiddenMessage)
+    {
+        var request = await _eventRequestRepository.GetByIdWithIncludesAsync(
+            e => e.Id == id,
+            e => e.Sport,
+            e => e.OperationsReviewer,
+            e => e.Admin
+        );
+
+        if (request == null)
+            throw new NotFoundException(StringConstant.NoRequestFound);
+
+        if (request.AdminId != adminId)
+            throw new ForbiddenException(forbiddenMessage);
+
+        if (request.Status != RequestStatus.Pending)
+            throw new ConflictException(StringConstant.EventRequestModifyNotAllowed);
+
+        return request;
     }
 }
