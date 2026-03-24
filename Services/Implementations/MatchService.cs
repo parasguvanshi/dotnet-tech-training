@@ -31,13 +31,15 @@ namespace SportsManagementApp.Services
             _mapper = mapper;
         }
 
+        public async Task<FixtureResponseDto> GetMatchByIdAsync(int matchId)
+        {
+            var (match, category) = await GetMatchWithCategoryAsync(matchId);
+            return FixtureMappingHelper.MapFixtures(new[] { match }, category, _mapper).First();
+        }
+
         public async Task<FixtureResponseDto> RescheduleAsync(int matchId, DateTime newStartDateTime)
         {
-            var match = await _matchRepo.GetByIdWithSetsAndResultAsync(matchId)
-                ?? throw new NotFoundException(string.Format(StringConstant.MatchNotFound, matchId));
-
-            var category = await _categoryRepo.GetByIdWithDetailsAsync(match.EventCategoryId)
-                ?? throw new NotFoundException(string.Format(StringConstant.CategoryNotFound, match.EventCategoryId));
+            var (match, category) = await GetMatchWithCategoryAsync(matchId);
 
             if (match.Status == MatchStatus.Completed)
                 throw new UnprocessableEntityException(
@@ -125,6 +127,17 @@ namespace SportsManagementApp.Services
 
             var sets = await _matchRepo.GetSetsAsync(matchId);
             return _mapper.Map<IEnumerable<MatchSetResponseDto>>(sets);
+        }
+
+        private async Task<(Match match, EventCategory category)> GetMatchWithCategoryAsync(int matchId)
+        {
+            var match = await _matchRepo.GetByIdWithSetsAndResultAsync(matchId)
+                ?? throw new NotFoundException(string.Format(StringConstant.MatchNotFound, matchId));
+
+            var category = await _categoryRepo.GetByIdWithDetailsAsync(match.EventCategoryId)
+                ?? throw new NotFoundException(string.Format(StringConstant.CategoryNotFound, match.EventCategoryId));
+
+            return (match, category);
         }
 
         private static bool AllSetsCompleted(Match match) =>
@@ -234,16 +247,21 @@ namespace SportsManagementApp.Services
             match.Status = MatchStatus.Completed;
             match.UpdatedAt = DateTime.UtcNow;
             await _matchRepo.UpdateAsync(match);
-            await _matchRepo.SaveChangesAsync();
 
             var allMatches = (await _matchRepo.GetByCategoryAsync(match.EventCategoryId, null)).ToList();
             int lastRound = allMatches.Max(m => m.RoundNumber);
             bool oddBracket = IsOddBracket(allMatches, lastRound);
 
-            if (IsFinal(match, lastRound)) { }
-            else if (IsByeMatch(match, lastRound)) await AdvanceByeMatchWinnerAsync(match, winnerId, allMatches, lastRound);
-            else if (oddBracket && match.RoundNumber == lastRound - 1 && match.BracketPosition == 0) await AdvanceSemiFinalAsync(match, winnerId, loserId, allMatches);
-            else await AdvanceRegularWinnerAsync(match, winnerId, allMatches, lastRound);
+            if (!IsFinal(match, lastRound))
+            {
+                if (IsByeMatch(match, lastRound)) 
+                    await AdvanceByeMatchWinnerAsync(match, winnerId, allMatches, lastRound);
+                else if (oddBracket && match.RoundNumber == lastRound - 1 && match.BracketPosition == 0) 
+                    await AdvanceSemiFinalAsync(match, winnerId, loserId, allMatches);
+                else 
+                    await AdvanceRegularWinnerAsync(match, winnerId, allMatches, lastRound);
+            }
+
             await _matchRepo.SaveChangesAsync();
 
             if (await _matchRepo.AllMatchesCompletedAsync(match.EventCategoryId))
