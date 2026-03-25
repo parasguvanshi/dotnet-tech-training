@@ -7,7 +7,7 @@ using SportsManagementApp.Exceptions;
 using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
-using SportsManagementApp.Constants;
+using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.Services
 {
