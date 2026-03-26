@@ -1,5 +1,5 @@
 using AutoMapper;
-using SportsManagementApp.Constants;
+using SportsManagementApp.StringConstants;
 using SportsManagementApp.Data.Entities;
 using SportsManagementApp.DTOs.Fixture;
 using SportsManagementApp.Enums;

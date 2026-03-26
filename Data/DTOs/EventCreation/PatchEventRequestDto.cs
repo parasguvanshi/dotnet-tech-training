@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using SportsManagementApp.Constants;
+using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.DTOs.EventCreation
 {

@@ -35,7 +35,9 @@ namespace SportsManagementApp.StringConstants
         public const string MessageRequired = "Message is Required";
         public const string IdRequired = "User ID Required for admin";
         public const string SportsNotFound = "Sports Not Found";
-        public const int ScheduleOverlapMinutes = 60;
+        public static readonly TimeOnly DayStart = new(8, 0);
+        public static readonly TimeOnly DayEnd = new(17, 0);
+        public const int SlotMinutes = 60;
         public const string ReactNativeCorsPolicy = "ReactNativePolicy";
         public const string SwaggerTitle = "Sports Management API";
         public const string SwaggerDescription = "Backend API for the Sports Management React Native app.";
