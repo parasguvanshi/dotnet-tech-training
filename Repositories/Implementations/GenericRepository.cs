@@ -40,7 +40,7 @@ namespace SportsManagementApp.Repositories.Implementations
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
+        public virtual async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet
                 .AsNoTracking()

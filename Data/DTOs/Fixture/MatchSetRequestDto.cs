@@ -12,7 +12,7 @@ namespace SportsManagementApp.DTOs.Fixture
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = StringConstant.ScoreValidate)]
         public int ScoreB { get; set; }
-
         public bool IsCompleted { get; set; } = false;
+        public int TotalSets { get; set; } = 0;
     }
 }

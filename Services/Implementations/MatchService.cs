@@ -140,10 +140,17 @@ namespace SportsManagementApp.Services
             return (match, category);
         }
 
-        private static bool AllSetsCompleted(Match match) =>
-            match.MatchSets.Any() &&
-            match.MatchSets.All(s => s.Status != SetStatus.Live) &&
-            (match.TotalSets == 0 || match.MatchSets.Count(s => s.Status == SetStatus.Completed) >= match.TotalSets);
+        private static bool AllSetsCompleted(Match match)
+        {
+            if (!match.MatchSets.Any()) return false;
+            if (match.MatchSets.Any(s => s.Status == SetStatus.Live)) return false;
+
+            int sideAWins = match.MatchSets.Count(s => s.Status == SetStatus.Completed && s.ScoreA > s.ScoreB);
+            int sideBWins = match.MatchSets.Count(s => s.Status == SetStatus.Completed && s.ScoreB > s.ScoreA);
+            int winsNeeded = match.TotalSets == 0 ? 1 : (match.TotalSets / 2) + 1;
+
+            return sideAWins >= winsNeeded || sideBWins >= winsNeeded;
+        }
 
         private static bool IsFinal(Match match, int lastRound) => match.RoundNumber == lastRound && match.BracketPosition == 0;
         private static bool IsByeMatch(Match match, int lastRound) => match.RoundNumber == lastRound && match.BracketPosition == 1;
@@ -178,6 +185,8 @@ namespace SportsManagementApp.Services
             {
                 match.Status = MatchStatus.Live;
                 match.UpdatedAt = DateTime.UtcNow;
+                if (request.TotalSets > 0)
+                    match.TotalSets = request.TotalSets;
                 await _matchRepo.UpdateAsync(match);
                 await _categoryRepo.UpdateEventStatusAsync(match.EventCategoryId, EventStatus.Live);
             }
