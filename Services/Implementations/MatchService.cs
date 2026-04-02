@@ -59,24 +59,24 @@ namespace SportsManagementApp.Services
                 throw new BadRequestException(
                     $"Match time must be between {StringConstant.DayStart} and {StringConstant.DayEnd}.");
 
-            var affected = category.Matches
+            var affectedMatches = category.Matches
                 .Where(m => m.Status != MatchStatus.Completed && m.MatchDateTime >= match.MatchDateTime)
                 .OrderBy(m => m.MatchDateTime)
                 .ToList();
 
             var newSlots = new List<DateTime>();
             var slot = newStartDateTime;
-            foreach (var m in affected)
+            foreach (var m in affectedMatches)
             {
                 newSlots.Add(slot);
                 slot = SlotHelper.GetNextSlot(slot, category.Event.EndDate);
             }
 
             var now = DateTime.UtcNow;
-            for (int i = 0; i < affected.Count; i++)
+            for (int i = 0; i < affectedMatches.Count; i++)
             {
-                affected[i].MatchDateTime = newSlots[i];
-                affected[i].UpdatedAt = now;
+                affectedMatches[i].MatchDateTime = newSlots[i];
+                affectedMatches[i].UpdatedAt = now;
             }
 
             await _matchRepo.SaveChangesAsync();
@@ -103,7 +103,7 @@ namespace SportsManagementApp.Services
                 ?? throw new NotFoundException(string.Format(StringConstant.MatchNotFound, matchId));
 
             MatchResultResponseDto? result = null;
-            if (HasMatchWinner(match))
+            if (AllSetsCompleted(match))
                 result = await SubmitResultAsync(matchId);
 
             return new SetUpdateResponseDto
@@ -149,7 +149,7 @@ namespace SportsManagementApp.Services
             return (match, category);
         }
 
-        private static bool HasMatchWinner(Match match) =>
+        private static bool AllSetsCompleted(Match match) =>
             match.MatchSets.Count(s => s.Status == SetStatus.Completed) == match.TotalSets;
 
         private static bool IsFinal(Match match, int lastRound) => match.RoundNumber == lastRound && match.BracketPosition == 0;
