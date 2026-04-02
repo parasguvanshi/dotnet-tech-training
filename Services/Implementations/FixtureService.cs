@@ -7,6 +7,7 @@ using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
 using SportsManagementApp.Services.Strategies;
+using SportsManagementApp.Helpers;
 
 namespace SportsManagementApp.Services
 {
@@ -76,21 +77,8 @@ namespace SportsManagementApp.Services
             {
                 match.MatchDateTime = slot;
                 match.MatchVenue = evt.EventVenue;
-                slot = GetNextSlot(slot, evt.EndDate);
+                slot = SlotHelper.GetNextSlot(slot, evt.EndDate);
             }
-        }
-
-        private static DateTime GetNextSlot(DateTime current, DateOnly endDate)
-        {
-            var next = current.AddMinutes(StringConstant.SlotMinutes);
-
-            if (TimeOnly.FromDateTime(next) >= StringConstant.DayEnd)
-                next = next.Date.AddDays(1).Add(StringConstant.DayStart.ToTimeSpan());
-
-            if (DateOnly.FromDateTime(next) > endDate)
-                throw new UnprocessableEntityException(StringConstant.NotEnoughDaysToSchedule);
-
-            return next;
         }
 
         private static List<int?> ExtractSideIds(EventCategory category)

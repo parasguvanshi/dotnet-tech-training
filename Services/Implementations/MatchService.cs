@@ -6,6 +6,7 @@ using SportsManagementApp.Enums;
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.Helpers;
 
 namespace SportsManagementApp.Services
 {
@@ -53,21 +54,29 @@ namespace SportsManagementApp.Services
                     string.Format(StringConstant.RescheduleOutsideEventDates,
                         category.Event.StartDate, category.Event.EndDate));
 
-            var delay = newStartDateTime - match.MatchDateTime;
+            var newTime = TimeOnly.FromDateTime(newStartDateTime);
+            if (newTime < StringConstant.DayStart || newTime >= StringConstant.DayEnd)
+                throw new BadRequestException(
+                    $"Match time must be between {StringConstant.DayStart} and {StringConstant.DayEnd}.");
 
-            var affected = category.Matches
+            var affectedMatches = category.Matches
                 .Where(m => m.Status != MatchStatus.Completed && m.MatchDateTime >= match.MatchDateTime)
                 .OrderBy(m => m.MatchDateTime)
                 .ToList();
 
-            if (affected.Last().MatchDateTime.Add(delay) > eventEnd)
-                throw new BadRequestException(StringConstant.ReschedulePushesMatchesBeyondEventEnd);
+            var newSlots = new List<DateTime>();
+            var slot = newStartDateTime;
+            foreach (var m in affectedMatches)
+            {
+                newSlots.Add(slot);
+                slot = SlotHelper.GetNextSlot(slot, category.Event.EndDate);
+            }
 
             var now = DateTime.UtcNow;
-            foreach (var m in affected)
+            for (int i = 0; i < affectedMatches.Count; i++)
             {
-                m.MatchDateTime = m.MatchDateTime.Add(delay);
-                m.UpdatedAt = now;
+                affectedMatches[i].MatchDateTime = newSlots[i];
+                affectedMatches[i].UpdatedAt = now;
             }
 
             await _matchRepo.SaveChangesAsync();
@@ -141,9 +150,7 @@ namespace SportsManagementApp.Services
         }
 
         private static bool AllSetsCompleted(Match match) =>
-            match.MatchSets.Any() &&
-            match.MatchSets.All(s => s.Status != SetStatus.Live) &&
-            (match.TotalSets == 0 || match.MatchSets.Count(s => s.Status == SetStatus.Completed) >= match.TotalSets);
+            match.MatchSets.Count(s => s.Status == SetStatus.Completed) == match.TotalSets;
 
         private static bool IsFinal(Match match, int lastRound) => match.RoundNumber == lastRound && match.BracketPosition == 0;
         private static bool IsByeMatch(Match match, int lastRound) => match.RoundNumber == lastRound && match.BracketPosition == 1;
@@ -178,6 +185,8 @@ namespace SportsManagementApp.Services
             {
                 match.Status = MatchStatus.Live;
                 match.UpdatedAt = DateTime.UtcNow;
+                if (request.TotalSets > 0)
+                    match.TotalSets = request.TotalSets;
                 await _matchRepo.UpdateAsync(match);
                 await _categoryRepo.UpdateEventStatusAsync(match.EventCategoryId, EventStatus.Live);
             }

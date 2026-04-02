@@ -20,6 +20,7 @@ public static class EventPredicateBuilder
         }
 
         return e =>
+            (!filter.EventId.HasValue || e.Id == filter.EventId.Value) &&
             (parsedStatus == null || e.Status == parsedStatus.Value) &&
             (string.IsNullOrWhiteSpace(filter.Name) || e.Name.Contains(filter.Name)) &&
             (!filter.SportId.HasValue || e.SportId == filter.SportId.Value);
