@@ -6,5 +6,6 @@ namespace SportsManagementApp.Services.Interfaces
     {
         Task<LoginResponseDto?> LoginAsync(LoginRequestDto loginRequest);
         Task<LoginResponseDto> RegisterAsync(RegisterRequestDto registerRequest);
+        Task ForgotPasswordAsync(ForgotPasswordRequestDto request);
     }
 }

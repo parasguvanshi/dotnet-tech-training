@@ -7,6 +7,7 @@ using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.StringConstants;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -36,24 +37,24 @@ namespace SportsManagementApp.Services.Implementations
 
             if (user == null)
             {
-                throw new UnauthorizedException("Invalid email or password");
+                throw new UnauthorizedException(StringConstant.InvalidEmailOrPassword);
             }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequest.Password);
 
             if (result == PasswordVerificationResult.Failed)
             {
-                throw new UnauthorizedException("Invalid password");
+                throw new UnauthorizedException(StringConstant.InvalidPassword);
             }
 
             if (!user.IsActive)
             {
-                throw new BadRequestException("User is deactivated");
+                throw new BadRequestException(StringConstant.UserDeactivated);
             }
 
             if (user.Role == null)
             {
-                throw new BadRequestException("User role is not assigned");
+                throw new BadRequestException(StringConstant.UserRoleNotAssigned);
             }
 
             var token = GenerateJwtToken(user);
@@ -64,18 +65,33 @@ namespace SportsManagementApp.Services.Implementations
             return response;
         }
 
+        public async Task ForgotPasswordAsync(ForgotPasswordRequestDto request)
+        {
+            var user = await _authRepository.GetUserByEmailWithRoleAsync(request.Email);
+
+            if (user == null)
+            {
+                throw new NotFoundException(StringConstant.UserNotFoundByEmail);
+            }
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, request.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _authRepository.SaveChangesAsync();
+        }
+
         public async Task<LoginResponseDto> RegisterAsync(RegisterRequestDto registerRequest)
         {
             if (await _authRepository.UserExistsAsync(registerRequest.Email))
             {
-                throw new ConflictException("User already exists");
+                throw new ConflictException(StringConstant.UserAlreadyExists);
             }
 
             var participantRole = await _roleRepository.GetRoleByTypeAsync(RoleConstants.Participant);
 
             if (participantRole == null)
             {
-                throw new NotFoundException("Participant Role not found");
+                throw new NotFoundException(StringConstant.ParticipantRoleNotFound);
             }
 
             var user = _mapper.Map<User>(registerRequest);
@@ -97,7 +113,7 @@ namespace SportsManagementApp.Services.Implementations
 
         private string GenerateJwtToken(User user)
         {
-            var key = Encoding.UTF8.GetBytes(_configuration[JwtConstant.Key] ?? throw new Exception("JWT Key missing"));
+            var key = Encoding.UTF8.GetBytes(_configuration[JwtConstant.Key] ?? throw new Exception(StringConstant.JwtKeyMissing));
 
             var claims = new[]
             {

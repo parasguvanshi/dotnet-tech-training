@@ -91,6 +91,8 @@ namespace SportsManagementApp.StringConstants
         public const string UserInactive = "User '{0}' is inactive and cannot be assigned as organizer.";
         public const string UserNotOrganizer = "User '{0}' does not hold the Organizer role.";
         public const string UnexpectedError = "An unexpected error occurred.";
+        public const string UserNotFoundByEmail = "No user found with the provided email.";
+        public const string PasswordUpdated = "Password updated successfully.";
         public const string UnauthorizedAccess = "Unauthorized access.";
         public const string Unauthorized = "Unauthorized.";
         public const string UnhandledExceptionLog = "Unhandled exception on {Method} {Path}";
@@ -103,5 +105,31 @@ namespace SportsManagementApp.StringConstants
         public const string TotalSetsInvalid = "Total sets must be an odd number between 1 and 9.";
         public const string PreviousRoundNotCompleted = "Previous round matches must be completed before starting this match.";
         public const string EntityNotFound = "{0} #{1} not found.";
+
+        public const string AnalyticsNotAvailable = "Analytics not available for this role";
+
+        public const string InvalidEmailOrPassword = "Invalid email or password";
+
+        public const string InvalidPassword = "Invalid password";
+
+        public const string UserDeactivated = "User is deactivated";
+
+        public const string UserRoleNotAssigned = "User role is not assigned";
+
+        public const string UserAlreadyExists = "User already exists";
+
+        public const string ParticipantRoleNotFound = "Participant Role not found";
+
+        public const string JwtKeyMissing = "JWT Key Missing";
+
+        public const string ParticipantAlreadyRegistered = "Participant already registered in this category";
+
+        public const string RegistrationNotSaved = "Registration not saved correctly";
+
+        public const string RoleAlreadyExists = "Role already exists";
+
+        public const string NotEnoughRegistrations = "Not enough participants to form teams";
+
+        public const string UserWithEmailAlreadyExists = "User with this email already exists";
     }
 }

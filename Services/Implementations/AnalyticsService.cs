@@ -2,6 +2,7 @@
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.Services.Implementations
 {
@@ -21,7 +22,8 @@ namespace SportsManagementApp.Services.Implementations
                 RoleConstants.Admin => await _analyticsRepository.GetAdminAnalyticsAsync(),
                 RoleConstants.Operation => await _analyticsRepository.GetOperationAnalyticsAsync(),
                 RoleConstants.Organizer => await _analyticsRepository.GetOrganizerAnalyticsAsync(userId),
-                _ => throw new UnauthorizedException("Analytics not available for this role")
+                _ => throw new UnauthorizedException(StringConstant.AnalyticsNotAvailable)
+                
             };
         }
     }
