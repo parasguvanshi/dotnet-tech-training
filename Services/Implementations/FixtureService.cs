@@ -81,19 +81,6 @@ namespace SportsManagementApp.Services
             }
         }
 
-        private static DateTime GetNextSlot(DateTime current, DateOnly endDate)
-        {
-            var next = current.AddMinutes(StringConstant.SlotMinutes);
-
-            if (TimeOnly.FromDateTime(next) >= StringConstant.DayEnd)
-                next = next.Date.AddDays(1).Add(StringConstant.DayStart.ToTimeSpan());
-
-            if (DateOnly.FromDateTime(next) > endDate)
-                throw new UnprocessableEntityException(StringConstant.NotEnoughDaysToSchedule);
-
-            return next;
-        }
-
         private static List<int?> ExtractSideIds(EventCategory category)
         {
             if (category.Format == MatchFormat.Doubles)

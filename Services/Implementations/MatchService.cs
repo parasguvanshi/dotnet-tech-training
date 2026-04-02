@@ -103,7 +103,7 @@ namespace SportsManagementApp.Services
                 ?? throw new NotFoundException(string.Format(StringConstant.MatchNotFound, matchId));
 
             MatchResultResponseDto? result = null;
-            if (AllSetsCompleted(match))
+            if (HasMatchWinner(match))
                 result = await SubmitResultAsync(matchId);
 
             return new SetUpdateResponseDto
@@ -149,10 +149,12 @@ namespace SportsManagementApp.Services
             return (match, category);
         }
 
-        private static bool AllSetsCompleted(Match match)
+        private static bool HasMatchWinner(Match match)
         {
             if (!match.MatchSets.Any()) return false;
             if (match.MatchSets.Any(s => s.Status == SetStatus.Live)) return false;
+            if (match.TotalSets > 0 && match.MatchSets.Count(s => s.Status == SetStatus.Completed) < match.TotalSets)
+                return false;
 
             int sideAWins = match.MatchSets.Count(s => s.Status == SetStatus.Completed && s.ScoreA > s.ScoreB);
             int sideBWins = match.MatchSets.Count(s => s.Status == SetStatus.Completed && s.ScoreB > s.ScoreA);
