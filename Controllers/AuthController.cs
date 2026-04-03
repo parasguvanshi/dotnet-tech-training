@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SportsManagementApp.Data.DTOs.Auth;
 using SportsManagementApp.Services.Interfaces;
 
@@ -27,6 +27,13 @@ namespace SportsManagementApp.Controllers
         {
             var result = await _authService.RegisterAsync(registerRequest);
             return Ok(result);
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto request)
+        {
+            await _authService.ForgotPasswordAsync(request);
+            return Ok();
         }
     }
 }

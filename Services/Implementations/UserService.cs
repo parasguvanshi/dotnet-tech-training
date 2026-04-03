@@ -8,6 +8,7 @@ using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.Services.Implementations
 {
@@ -65,7 +66,7 @@ namespace SportsManagementApp.Services.Implementations
             );
 
             if (existingUser.Any(user => user.Email.Equals(createUser.Email, StringComparison.OrdinalIgnoreCase)))
-                throw new ConflictException("User with this email already exists");
+                throw new ConflictException(StringConstant.UserWithEmailAlreadyExists);
 
             var user = _mapper.Map<User>(createUser);
             user.CreatedAt = DateTime.UtcNow;
@@ -82,7 +83,7 @@ namespace SportsManagementApp.Services.Implementations
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
-                throw new NotFoundException("User not found");
+                throw new NotFoundException(StringConstant.UserNotFound);
 
             _mapper.Map(updateUser, user);
 

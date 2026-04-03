@@ -3,6 +3,7 @@ using SportsManagementApp.Data.Entities;
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.StringConstants;
 
 namespace SportsManagementApp.Services.Implementations
 {
@@ -26,7 +27,7 @@ namespace SportsManagementApp.Services.Implementations
 
             if (existing != null)
             {
-                throw new ConflictException("Role already exists");
+                throw new ConflictException(StringConstant.RoleAlreadyExists);
             }
 
             var role = new Role

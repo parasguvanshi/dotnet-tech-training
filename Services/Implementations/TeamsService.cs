@@ -6,6 +6,7 @@ using SportsManagementApp.Data.Predicates;
 using SportsManagementApp.Exceptions;
 using SportsManagementApp.Repositories.Interfaces;
 using SportsManagementApp.Services.Interfaces;
+using SportsManagementApp.StringConstants;
 namespace SportsManagementApp.Services.Implementations
 {
     public class TeamsService : ITeamsService
@@ -41,7 +42,7 @@ namespace SportsManagementApp.Services.Implementations
             var registration = await _participantRepository.GetParticipantsByCategoryAsync(request.EventCategoryId);
 
             if (registration.Count < 4)
-                throw new BadRequestException("Not enough participants to form teams");
+                throw new BadRequestException(StringConstant.NotEnoughRegistrations);
 
             if (registration.Count % 2 != 0)
                 registration.RemoveAt(registration.Count - 1);
