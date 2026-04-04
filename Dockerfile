@@ -1,9 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
-COPY . ./
-RUN dotnet restore SportsManagementApp.csproj
-RUN dotnet publish SportsManagementApp.csproj -c Release -o /out
+# Sirf csproj copy karo
+COPY SportsManagementApp/SportsManagementApp.csproj ./SportsManagementApp/
+RUN dotnet restore SportsManagementApp/SportsManagementApp.csproj
+
+# Ab baaki code copy karo
+COPY . .
+
+RUN dotnet publish SportsManagementApp/SportsManagementApp.csproj -c Release -o /out
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
