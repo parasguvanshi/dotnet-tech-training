@@ -12,36 +12,36 @@ using SportsManagementApp.Data;
 namespace SportsManagementApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260227164530_TotalSetsField")]
-    partial class TotalSetsField
+    [Migration("20260405070203_InitMySQL")]
+    partial class InitMySQL
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Event", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventRequestId")
                         .HasColumnType("int");
@@ -49,7 +49,7 @@ namespace SportsManagementApp.Migrations
                     b.Property<string>("EventVenue")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("MaxParticipantsCount")
                         .HasColumnType("int");
@@ -57,19 +57,22 @@ namespace SportsManagementApp.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("OrganizerId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("RegistrationDeadline")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("RegistrationDeadline")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("SportId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<int?>("SportId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -78,7 +81,7 @@ namespace SportsManagementApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -89,19 +92,21 @@ namespace SportsManagementApp.Migrations
 
                     b.HasIndex("SportId");
 
+                    b.HasIndex("SportId1");
+
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventCategory", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
@@ -116,7 +121,7 @@ namespace SportsManagementApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -125,27 +130,27 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("EventCategories");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventRequest", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AdminId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("EventName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("Format")
                         .HasColumnType("int");
@@ -155,31 +160,31 @@ namespace SportsManagementApp.Migrations
 
                     b.Property<string>("LogisticsRequirements")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("OperationsReviewerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Remarks")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("RequestedVenue")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("SportId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -192,25 +197,25 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("EventRequests");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Match", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Match", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BracketPosition")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventCategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("MatchDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MatchNumber")
                         .HasColumnType("int");
@@ -218,7 +223,7 @@ namespace SportsManagementApp.Migrations
                     b.Property<string>("MatchVenue")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("RoundNumber")
                         .HasColumnType("int");
@@ -236,7 +241,7 @@ namespace SportsManagementApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -245,16 +250,16 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("Matches");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.MatchSet", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.MatchSet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
@@ -272,7 +277,7 @@ namespace SportsManagementApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -281,22 +286,59 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("MatchSets");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.ParticipantRegistration", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Audience")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EventRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventRequestId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.ParticipantRegistration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventCategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -311,22 +353,22 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("ParticipantRegistrations");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Result", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Result", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("WinnerId")
                         .HasColumnType("int");
@@ -339,62 +381,66 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("Results");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Role", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Sport", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Sport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllowedFormats")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Sports");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Team", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Team", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventCategoryId")
                         .HasColumnType("int");
@@ -402,10 +448,10 @@ namespace SportsManagementApp.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -414,22 +460,22 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.TeamMember", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.TeamMember", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -443,39 +489,39 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.User", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -484,25 +530,29 @@ namespace SportsManagementApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Event", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Event", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.EventRequest", "EventRequest")
+                    b.HasOne("SportsManagementApp.Data.Entities.EventRequest", "EventRequest")
                         .WithOne("Event")
-                        .HasForeignKey("SportsManagementApp.Entities.Event", "EventRequestId")
+                        .HasForeignKey("SportsManagementApp.Data.Entities.Event", "EventRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SportsManagementApp.Data.Entities.User", "Organizer")
+                        .WithMany()
+                        .HasForeignKey("OrganizerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportsManagementApp.Entities.User", "Organizer")
+                    b.HasOne("SportsManagementApp.Data.Entities.Sport", "Sport")
                         .WithMany()
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("SportId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportsManagementApp.Entities.Sport", "Sport")
+                    b.HasOne("SportsManagementApp.Data.Entities.Sport", null)
                         .WithMany("Events")
-                        .HasForeignKey("SportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SportId1");
 
                     b.Navigation("EventRequest");
 
@@ -511,9 +561,9 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Sport");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventCategory", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventCategory", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.Event", "Event")
+                    b.HasOne("SportsManagementApp.Data.Entities.Event", "Event")
                         .WithMany("Categories")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -522,20 +572,20 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventRequest", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventRequest", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.User", "Admin")
+                    b.HasOne("SportsManagementApp.Data.Entities.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SportsManagementApp.Entities.User", "OperationsReviewer")
+                    b.HasOne("SportsManagementApp.Data.Entities.User", "OperationsReviewer")
                         .WithMany()
                         .HasForeignKey("OperationsReviewerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("SportsManagementApp.Entities.Sport", "Sport")
+                    b.HasOne("SportsManagementApp.Data.Entities.Sport", "Sport")
                         .WithMany()
                         .HasForeignKey("SportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -548,9 +598,9 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Sport");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Match", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Match", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.EventCategory", "EventCategory")
+                    b.HasOne("SportsManagementApp.Data.Entities.EventCategory", "EventCategory")
                         .WithMany("Matches")
                         .HasForeignKey("EventCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -559,9 +609,9 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("EventCategory");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.MatchSet", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.MatchSet", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.Match", "Match")
+                    b.HasOne("SportsManagementApp.Data.Entities.Match", "Match")
                         .WithMany("MatchSets")
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -570,15 +620,26 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Match");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.ParticipantRegistration", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Notification", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.EventCategory", "EventCategory")
+                    b.HasOne("SportsManagementApp.Data.Entities.EventRequest", "EventRequest")
+                        .WithMany("Notifications")
+                        .HasForeignKey("EventRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventRequest");
+                });
+
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.ParticipantRegistration", b =>
+                {
+                    b.HasOne("SportsManagementApp.Data.Entities.EventCategory", "EventCategory")
                         .WithMany("EventRegistrations")
                         .HasForeignKey("EventCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportsManagementApp.Entities.User", "User")
+                    b.HasOne("SportsManagementApp.Data.Entities.User", "User")
                         .WithMany("Registrations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -589,20 +650,20 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Result", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Result", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.Match", "Match")
+                    b.HasOne("SportsManagementApp.Data.Entities.Match", "Match")
                         .WithOne("Result")
-                        .HasForeignKey("SportsManagementApp.Entities.Result", "MatchId")
+                        .HasForeignKey("SportsManagementApp.Data.Entities.Result", "MatchId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Match");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Team", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Team", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.EventCategory", "EventCategory")
+                    b.HasOne("SportsManagementApp.Data.Entities.EventCategory", "EventCategory")
                         .WithMany("Teams")
                         .HasForeignKey("EventCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -611,15 +672,15 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("EventCategory");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.TeamMember", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.TeamMember", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.Team", "Team")
+                    b.HasOne("SportsManagementApp.Data.Entities.Team", "Team")
                         .WithMany("Members")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SportsManagementApp.Entities.User", "User")
+                    b.HasOne("SportsManagementApp.Data.Entities.User", "User")
                         .WithMany("TeamMembers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -630,9 +691,9 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.User", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.User", b =>
                 {
-                    b.HasOne("SportsManagementApp.Entities.Role", "Role")
+                    b.HasOne("SportsManagementApp.Data.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -641,12 +702,12 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Event", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Event", b =>
                 {
                     b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventCategory", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventCategory", b =>
                 {
                     b.Navigation("EventRegistrations");
 
@@ -655,34 +716,36 @@ namespace SportsManagementApp.Migrations
                     b.Navigation("Teams");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.EventRequest", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.EventRequest", b =>
                 {
                     b.Navigation("Event");
+
+                    b.Navigation("Notifications");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Match", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Match", b =>
                 {
                     b.Navigation("MatchSets");
 
                     b.Navigation("Result");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Role", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Role", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Sport", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Sport", b =>
                 {
                     b.Navigation("Events");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.Team", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.Team", b =>
                 {
                     b.Navigation("Members");
                 });
 
-            modelBuilder.Entity("SportsManagementApp.Entities.User", b =>
+            modelBuilder.Entity("SportsManagementApp.Data.Entities.User", b =>
                 {
                     b.Navigation("Registrations");
 
